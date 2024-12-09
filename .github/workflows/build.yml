@@ -38,7 +38,7 @@ jobs:
       - name: Archive Linux binary
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
-          zip -j ${{ github.workspace }}/linux_binary.zip $HOME/PhraseCraft/PhraseCraft/dist/phrasec
+          zip -j ${{ github.workspace }}/linux_binary.zip /home/runner/work/PhraseCraft/PhraseCraft/dist/phrasec
         env:
           REPO_PATH: ${{ github.workspace }}
 
