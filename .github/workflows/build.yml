@@ -50,11 +50,11 @@ jobs:
       # 7. Debugging: List contents of the dist folder after build
       - name: List contents of dist folder after build
         run: |
-          ls -l PhraseCraft/dist/ || echo "No dist directory found"
+          ls -l PhraseCraft/PhraseCraft/dist/ || echo "No dist directory found"
       
       # 8. Upload the built executables as artifacts
       - name: Upload Executable
         uses: actions/upload-artifact@v3  # Using the latest v3 version of upload-artifact
         with:
           name: phrasecraft-executable-${{ matrix.os }}
-          path: PhraseCraft/dist/phrasec*   # Matches both phrasec (Linux) and phrasec.exe (Windows)
+          path: PhraseCraft/PhraseCraft/dist/phrasec*   # Correct path to the built executable
