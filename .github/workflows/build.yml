@@ -45,7 +45,7 @@ jobs:
       - name: Archive Windows binary
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          powershell Compress-Archive -Path "$Env:REPO_PATH\PhraseCraft\dist\phrasec" -DestinationPath "$Env:REPO_PATH\windows_binary.zip"
+          powershell Compress-Archive -Path "$Env:REPO_PATH\dist\phrasec" -DestinationPath "$Env:REPO_PATH\windows_binary.zip"
         env:
           REPO_PATH: ${{ github.workspace }}
 
