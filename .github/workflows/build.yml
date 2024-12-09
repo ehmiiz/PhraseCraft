@@ -1,45 +1,64 @@
-name: Build PhraseCraft Binaries
+name: Build and Upload Binaries
 
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.12']
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - uses: actions/checkout@v4
     
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pyinstaller
-        
-    - name: Build binary
-      run: |
-        cd PhraseCraft
-        pyinstaller --onefile phrasec.py
-        
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: phrasecraft-${{ matrix.os }}
-        path: PhraseCraft/dist/phrasec${{ matrix.os == 'windows-latest' && '.exe' || '' }}
-        
-    - name: Release binaries
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: PhraseCraft/dist/phrasec${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build binary
+        run: |
+          python PhraseCraft/build_phrasec.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          REPO_PATH: ${{ github.workspace }}
+
+      - name: Archive Linux binary
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          zip -j ${{ github.workspace }}/linux_binary.zip ${{ github.workspace }}/PhraseCraft/dist/phrasec
+        env:
+          REPO_PATH: ${{ github.workspace }}
+
+      - name: Archive Windows binary
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          powershell Compress-Archive -Path "$Env:REPO_PATH\PhraseCraft\dist\phrasec" -DestinationPath "$Env:REPO_PATH\windows_binary.zip"
+        env:
+          REPO_PATH: ${{ github.workspace }}
+
+      - name: Upload Linux binary
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-binary
+          path: ${{ github.workspace }}/linux_binary.zip
+
+      - name: Upload Windows binary
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-binary
+          path: ${{ github.workspace }}/windows_binary.zip
