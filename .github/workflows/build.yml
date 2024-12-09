@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v3  # Using the latest v3 version of upload-artifact
         with:
           name: phrasecraft-executable-${{ matrix.os }}
-          path: PhraseCraft/dist/*
+          path: PhraseCraft/dist/phrasec*  # Correct path to the built executable
