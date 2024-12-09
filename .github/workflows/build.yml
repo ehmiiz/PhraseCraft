@@ -52,4 +52,5 @@ jobs:
         uses: actions/upload-artifact@v3  # Using the latest v3 version of upload-artifact
         with:
           name: phrasecraft-executable-${{ matrix.os }}
-          path: PhraseCraft/dist/phrasec*   # Matches both phrasec (Linux) and phrasec.exe (Windows)
+          path: |
+            PhraseCraft/dist/phrasec*  # This will match both phrasec (Linux) and phrasec.exe (Windows)
