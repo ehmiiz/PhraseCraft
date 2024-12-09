@@ -42,9 +42,14 @@ jobs:
         run: |
           pyinstaller --onefile --name phrasec --add-data "PhraseCraft/eef_wordlist.txt:." PhraseCraft/phrasec.py
 
-      # 6. Upload the built executables as artifacts
+      # 6. List contents of dist folder to verify the executable's presence
+      - name: List contents of dist folder
+        run: |
+          ls -l PhraseCraft/dist/
+
+      # 7. Upload the built executables as artifacts
       - name: Upload Executable
         uses: actions/upload-artifact@v3  # Using the latest v3 version of upload-artifact
         with:
           name: phrasecraft-executable-${{ matrix.os }}
-          path: PhraseCraft/dist/phrasec*  # Correct path to the built executable
+          path: PhraseCraft/dist/phrasec*   # Matches both phrasec (Linux) and phrasec.exe (Windows)
