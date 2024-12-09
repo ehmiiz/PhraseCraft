@@ -37,20 +37,20 @@ jobs:
       - name: Install PyInstaller
         run: pip install pyinstaller  # Install PyInstaller for building the executable
       
-      # 5. Debugging: List contents of the current directory before building
+      # 5. Debugging: List current directory contents before building
       - name: List current directory contents before build
         run: |
           ls -l
-      
-      # 6. Build the executable using PyInstaller
+
+      # 6. Build the executable using PyInstaller and capture output
       - name: Build phrasecraft executable
         run: |
-          pyinstaller --onefile --name phrasec --add-data "PhraseCraft/eef_wordlist.txt:." PhraseCraft/phrasec.py
+          pyinstaller --onefile --name phrasec --add-data "PhraseCraft/eef_wordlist.txt:." PhraseCraft/phrasec.py > pyinstaller_build.log 2>&1 || tail -n 10 pyinstaller_build.log
 
       # 7. Debugging: List contents of the dist folder after build
       - name: List contents of dist folder after build
         run: |
-          ls -l PhraseCraft/dist/
+          ls -l PhraseCraft/dist/ || echo "No dist directory found"
       
       # 8. Upload the built executables as artifacts
       - name: Upload Executable
