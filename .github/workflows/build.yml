@@ -1,60 +1,45 @@
-name: Build phrasecraft CLI Executable
+name: Build PhraseCraft Binaries
 
 on:
-  push:
-    branches:
-      - main  # Trigger build on push to main branch
-  pull_request:
-    branches:
-      - main  # Trigger build on pull request to main branch
+  release:
+    types: [created]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]  # Build for both Linux and Windows
-    
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.12']
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      # 1. Checkout code from the repository
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # 2. Set up Python
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-      
-      # 3. Install dependencies from requirements.txt
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Correct path to requirements.txt at the root
-
-      # 4. Install PyInstaller
-      - name: Install PyInstaller
-        run: pip install pyinstaller  # Install PyInstaller for building the executable
-      
-      # 5. Debugging: List current directory contents before building
-      - name: List current directory contents before build
-        run: |
-          ls -l
-
-      # 6. Build the executable using PyInstaller and capture output
-      - name: Build phrasecraft executable
-        run: |
-          pyinstaller --onefile --name phrasec --add-data "PhraseCraft/eef_wordlist.txt:." PhraseCraft/phrasec.py > pyinstaller_build.log 2>&1 || tail -n 10 pyinstaller_build.log
-
-      # 7. Debugging: List contents of the dist folder after build
-      - name: List contents of dist folder after build
-        run: |
-          ls -l PhraseCraft/PhraseCraft/dist/ || echo "No dist directory found"
-      
-      # 8. Upload the built executables as artifacts
-      - name: Upload Executable
-        uses: actions/upload-artifact@v3  # Using the latest v3 version of upload-artifact
-        with:
-          name: phrasecraft-executable-${{ matrix.os }}
-          path: PhraseCraft/PhraseCraft/dist/phrasec*   # Correct path to the built executable
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+        
+    - name: Build binary
+      run: |
+        cd PhraseCraft
+        pyinstaller --onefile phrasec.py
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: phrasecraft-${{ matrix.os }}
+        path: PhraseCraft/dist/phrasec${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+        
+    - name: Release binaries
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: PhraseCraft/dist/phrasec${{ matrix.os == 'windows-latest' && '.exe' || '' }}
