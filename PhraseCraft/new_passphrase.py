@@ -9,3 +9,4 @@ random_words = phrasecraft_object.select_random_words(wordlist, 4)
 
 # Outputs the passphrase
 my_passphrase = phrasecraft_object.format_passphrase(random_words)
+print(my_passphrase)

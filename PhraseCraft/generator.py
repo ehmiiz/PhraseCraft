@@ -56,6 +56,6 @@ class PhraseGenerator:
         except Exception as e:
             print(f"An unexpected error: {e}")
 
-    def format_passphrase(self, final_wordlist: list) -> str:
+    def format_passphrase(self, final_wordlist: list, delmimiter=" ") -> str:
         """Finialize the passphrase using the words randomized."""
-        print(" ".join(final_wordlist))
+        return f"{delmimiter}".join(final_wordlist)
