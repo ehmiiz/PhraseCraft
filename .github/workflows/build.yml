@@ -41,7 +41,7 @@ jobs:
 
       # 5. Upload the built executables as artifacts
       - name: Upload Executable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3  # Updated to v3
         with:
           name: phrasecraft-executable-${{ matrix.os }}
           path: PhraseCraft/dist/*
