@@ -80,7 +80,7 @@ jobs:
 
       - name: Building Windows binary
         run: |
-          python PhraseCraft/build_phrasec.py --output ./PhraseCraft/dist/phrasec.exe
+          python PhraseCraft/build_phrasec.py
 
       - name: List Dist Directory
         run: |
@@ -97,6 +97,6 @@ jobs:
 
       - name: Upload Windows Artifact
         run: |
-          gh release upload "$RELEASE_TAG" ./PhraseCraft/dist/phrasec.exe \
+          gh release upload "$RELEASE_TAG" ./dist/* \
             --clobber
         shell: bash
