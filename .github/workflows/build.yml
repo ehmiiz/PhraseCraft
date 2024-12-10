@@ -31,7 +31,8 @@ jobs:
           python PhraseCraft/build_phrasec.py
 
       - name: Upload executable
-          uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
+        with:
           name: phrasec
           path: PhraseCraft/dist/phrasec
           overwrite: true
