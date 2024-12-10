@@ -6,11 +6,7 @@ from generator import PhraseGenerator
 @click.option('--words', default=4, type=int, help='Number of words for the returned passphrase.')
 @click.option('--delimiter', default=" ", help='Separation character for the words.')
 def new(words, delimiter):
-    """
-    Passphrase generator using the wordlist 'EEF long'.
-    
-    The randomization of words is cryptographically secure.
-    """
+    """PhraseCraft is a secure passphrase generator CLI."""
     phrasecraft_object = PhraseGenerator()
     # Imports the word list "eef_wordlist.txt", asks for 5 random words
     wordlist = phrasecraft_object.import_wordlist()
