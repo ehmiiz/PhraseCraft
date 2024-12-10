@@ -41,7 +41,13 @@ jobs:
       - name: Authenticate gh
         run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
 
-      - name: Create a Release
+      - name: Create Release if Not Exists
+        run: |
+          if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --notes "Automated release for $RELEASE_TAG"
+          fi
+
+      - name: Upload Release Artifacts
         run: |
           gh release upload "$RELEASE_TAG" ./dist/* \
             --clobber
