@@ -91,6 +91,6 @@ jobs:
 
       - name: Upload Windows Artifact
         run: |
-          gh release upload "$RELEASE_TAG" ./dist/phrasec.exe \
+          gh release upload "$RELEASE_TAG" ./PhraseCraft/dist/phrasec.exe \
             --clobber
         shell: bash
