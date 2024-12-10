@@ -82,11 +82,6 @@ jobs:
         run: |
           python PhraseCraft/build_phrasec.py
 
-      - name: List Dist Directory
-        run: |
-          ls -R ./PhraseCraft/dist
-        shell: bash
-
       - name: Extract Release Tag
         id: extract_tag
         run: echo "RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')" >> $GITHUB_ENV
