@@ -1,47 +1,50 @@
-  name: Build and release CLI executable
+name: Build and release CLI executable
 
-  on: [push]
+on:
+  push:
+    tags:
+      - 'v*' # Run this workflow only for semantic version tags
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v4
-        - name: Set up Python
-          # This is the version of the action for setting up Python, not the Python version.
-          uses: actions/setup-python@v5
-          with:
-            # Semantic version range syntax or exact version of a Python version
-            python-version: "3.12"
-            # Optional - x64 or x86 architecture, defaults to x64
-            architecture: "x64"
-        # You can test your matrix by printing the current Python version
-        - name: Display Python version
-          run: python -c "import sys; print(sys.version)"
-        # Setup gh cli
-        - name: Set up GitHub CLI
-          run: |
-            sudo apt update
-            sudo apt install -y gh
-        # python deps
-        - name: Installing dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r requirements.txt
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: "x64"
 
-        - name: Building binaries
-          run: |
-            python PhraseCraft/build_phrasec.py
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
 
-        - name: Authenticate gh
-          run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
+      - name: Set up GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
 
-        - name: Create a Release
-          run: |
-            RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-            gh release upload "linux-ci" ./dist/* \
-              --clobber
+      - name: Installing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-        - name: Verify Release
-          run: gh release view "linux-ci"
+      - name: Building binaries
+        run: |
+          python PhraseCraft/build_phrasec.py
+
+      - name: Extract Release Tag
+        id: extract_tag
+        run: echo "RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')" >> $GITHUB_ENV
+
+      - name: Authenticate gh
+        run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
+
+      - name: Create a Release
+        run: |
+          gh release upload "$RELEASE_TAG" ./dist/* \
+            --clobber
+
+      - name: Verify Release
+        run: gh release view "$RELEASE_TAG"
