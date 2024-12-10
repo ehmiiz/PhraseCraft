@@ -80,11 +80,17 @@ jobs:
 
       - name: Building Windows binary
         run: |
-          python PhraseCraft/build_phrasec.py --output dist/phrasec.exe
+          python PhraseCraft/build_phrasec.py --output ./PhraseCraft/dist/phrasec.exe
+
+      - name: List Dist Directory
+        run: |
+          ls -R ./PhraseCraft/dist
+        shell: bash
 
       - name: Extract Release Tag
         id: extract_tag
         run: echo "RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')" >> $GITHUB_ENV
+        shell: bash
 
       - name: Authenticate gh
         run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
