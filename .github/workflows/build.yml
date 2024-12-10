@@ -6,7 +6,7 @@ on:
       - 'v*' # Run this workflow only for semantic version tags
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -54,3 +54,42 @@ jobs:
 
       - name: Verify Release
         run: gh release view "$RELEASE_TAG"
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: "x64"
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Set up GitHub CLI
+        run: |
+          choco install gh --version=2.0.0
+
+      - name: Installing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Building Windows binary
+        run: |
+          python PhraseCraft/build_phrasec.py --output dist/phrasec.exe
+
+      - name: Extract Release Tag
+        id: extract_tag
+        run: echo "RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')" >> $GITHUB_ENV
+
+      - name: Authenticate gh
+        run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
+
+      - name: Upload Windows Artifact
+        run: |
+          gh release upload "$RELEASE_TAG" ./dist/phrasec.exe \
+            --clobber
