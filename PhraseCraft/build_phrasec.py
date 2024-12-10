@@ -10,14 +10,13 @@ def build_executable(platform):
     pyinstaller_cmd = [
         'pyinstaller',
         '--onefile',  # Single file output
+        '--strip',
         '--name', 'phrasec',  # Name of the output executable
-        '--add-data', f"{wordlist_path}:.",  # Include wordlist
+        '--add-data', f"{wordlist_path}:.",
         f"{phrasec_path}",  # Path to the main script
     ]
 
     if platform == 'windows':
-        # Handle Windows-specific paths
-        pyinstaller_cmd.append('--windowed')  # Optional, for GUI apps
         print("Building for Windows...")
     elif platform == 'linux':
         # Handle Linux-specific paths
