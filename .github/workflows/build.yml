@@ -40,9 +40,8 @@
         - name: Create a Release
           run: |
             RELEASE_TAG=$(echo $GITHUB_REF | sed 's/refs\/tags\///')
-            gh release create "linux-ci" ./dist/* \
-              --title "Release linux-ci" \
-              --notes "Automated release for linux-ci"
+            gh release upload "linux-ci" ./dist/* \
+              --clobber
 
         - name: Verify Release
           run: gh release view "linux-ci"
