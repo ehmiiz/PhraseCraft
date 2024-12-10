@@ -93,3 +93,4 @@ jobs:
         run: |
           gh release upload "$RELEASE_TAG" ./dist/phrasec.exe \
             --clobber
+        shell: bash
