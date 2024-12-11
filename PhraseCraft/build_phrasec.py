@@ -9,7 +9,7 @@ def build_executable(platform):
     # Set the PyInstaller command for your platform
     pyinstaller_cmd = [
         'pyinstaller',
-        '--onefile',  # Single file output
+        #'--onefile',  # Single file output
         '--strip',
         '--name', 'phrasec',  # Name of the output executable
         '--add-data', f"{wordlist_path}:.",

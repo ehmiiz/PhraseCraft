@@ -1,5 +1,5 @@
 from pathlib import Path
-from secrets import choice
+from random import choice
 import re
 from warnings import warn
 
